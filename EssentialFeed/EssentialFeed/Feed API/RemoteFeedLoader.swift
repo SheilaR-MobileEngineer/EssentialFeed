@@ -8,14 +8,6 @@
 import Foundation
 import EssentialFeed
 
-public enum HTTPClientResult {
-    case success(Data, HTTPURLResponse)
-    case failure(Error)
-}
-protocol HTTPClient {
-    func get(from url: URL, completion: @escaping (HTTPClientResult) -> Void)
-}
-
 final class RemoteFeedLoader {
     private let url: URL
     private let client : HTTPClient
