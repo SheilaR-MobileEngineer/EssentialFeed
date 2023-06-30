@@ -2,7 +2,7 @@
 //  RemoteFeedLoaderTest.swift
 //  EssentialFeedTests
 //
-//  Created by sr0922 on 6/6/23.
+//  Created by Sheila Rodriguez on 6/6/23.
 //
 
 import XCTest
