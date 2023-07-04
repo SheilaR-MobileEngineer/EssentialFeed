@@ -150,17 +150,32 @@ class RemoteFeedLoaderTest: XCTestCase {
         return try! JSONSerialization.data(withJSONObject: json)
     }
     
-    private func expect(_ sut: RemoteFeedLoader, toCompleteWithResult result: RemoteFeedLoader.Result, when action: () -> Void, file: StaticString = #file, line: UInt = #line){
+    private func expect(_ sut: RemoteFeedLoader, toCompleteWithResult expectedResult: RemoteFeedLoader.Result, when action: () -> Void, file: StaticString = #file, line: UInt = #line){
+        
+        // to confirm we are only executing once
+        let exp = expectation(description: "Wait for load completion")
         
         // act section
-        var capturedResults = [RemoteFeedLoader.Result]()
-        
-        sut.load{ capturedResults.append($0)}
+        sut.load{ receivedResult in
+            switch(receivedResult, expectedResult) {
+            case let (.success(receivedItems), .success(expectedItems)):
+                //file and line to show the exact line where it fails
+                XCTAssertEqual(receivedItems, expectedItems, file: file, line: line)
+                
+            case let (.failure(receivedError), .failure(expectedError)):
+                
+                XCTAssertEqual(receivedError, expectedError, file: file, line: line)
+                
+            default:
+                XCTFail("Expected result \(expectedResult) got \(receivedResult) instead", file: file, line: line)
+            }
+            
+            exp.fulfill()
+        }
         
         action()
         
-        //file and line to show the exact line where it fails
-        XCTAssertEqual(capturedResults, [result], file: file, line: line)
+        wait(for: [exp], timeout: 1.0)
     }
     
     // doesn't have behaviour only accumulates received properties
