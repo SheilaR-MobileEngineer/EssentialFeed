@@ -7,7 +7,7 @@
 
 import Foundation
 
-class RemoteFeedLoader {
+public final class RemoteFeedLoader: FeedLoader {
     
     private let url: URL
     private let client: HTTPClient
